@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <com.applidium.shutterbug.FetchableImageView
+        android:id="@+id/image"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="10dip"
+        android:layout_weight="1"
+        android:maxLines="2"
+        android:textSize="20dip" />
+
+</LinearLayout>

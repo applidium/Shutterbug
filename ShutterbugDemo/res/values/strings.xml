@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">ShutterbugDemo</string>
+    <string name="title_http_connector_activity">HTTPConnector</string>
+    <string name="title_shutterbug_activity">Shutterbug</string>
+    <string name="loading">Loading…</string>
+    <string name="clear_cache">Clear Cache</string>
+
+</resources>
