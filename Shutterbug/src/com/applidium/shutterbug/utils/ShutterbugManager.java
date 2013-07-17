@@ -2,7 +2,9 @@ package com.applidium.shutterbug.utils;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,11 +64,15 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
 
     private String getCacheKey(String url) {
         try {
-            return URLEncoder.encode(url, "US-ASCII");
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(url.getBytes("UTF-8"), 0, url.length());
+            return String.format("%x", new BigInteger(md.digest()));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     private int getListenerIndex(ShutterbugManagerListener listener, String url) {
