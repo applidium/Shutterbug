@@ -62,7 +62,7 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
         ImageCache.getSharedImageCache(mContext).queryCache(getCacheKey(url), this, new DownloadRequest(url, listener));
     }
 
-    private String getCacheKey(String url) {
+    public static String getCacheKey(String url) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             md.update(url.getBytes("UTF-8"), 0, url.length());
