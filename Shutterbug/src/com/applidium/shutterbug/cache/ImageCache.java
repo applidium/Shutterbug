@@ -88,21 +88,17 @@ public class ImageCache {
             Editor editor = mDiskCache.edit(cacheKey);
             final OutputStream outputStream = editor.newOutputStream(0);
             final int bufferSize = 1024;
-            try {
-                byte[] bytes = new byte[bufferSize];
-                for (;;) {
-                    int count = inputStream.read(bytes, 0, bufferSize);
-                    if (count == -1)
-                        break;
-                    outputStream.write(bytes, 0, count);
-                }
-                outputStream.close();
-                editor.commit();
-                return mDiskCache.get(cacheKey);
-            } catch (Exception e) {
-                e.printStackTrace();
+            byte[] bytes = new byte[bufferSize];
+            for (;;) {
+                int count = inputStream.read(bytes, 0, bufferSize);
+                if (count == -1)
+                    break;
+                outputStream.write(bytes, 0, count);
             }
-        } catch (IOException e) {
+            outputStream.close();
+            editor.commit();
+            return mDiskCache.get(cacheKey);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -164,7 +160,7 @@ public class ImageCache {
         }
 
     }
-    
+
     private void openDiskCache() {
         File directory;
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
