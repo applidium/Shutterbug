@@ -36,16 +36,24 @@ public class FetchableImageView extends ImageView implements ShutterbugManagerLi
         setImage(url, new ColorDrawable(getContext().getResources().getColor(R.color.transparent)));
     }
 
+    public void setImage(String url, int desiredHeight, int desiredWidth) {
+        setImage(url, new ColorDrawable(getContext().getResources().getColor(R.color.transparent)), desiredHeight, desiredWidth);
+    }
+
     public void setImage(String url, int placeholderDrawableId) {
         setImage(url, getContext().getResources().getDrawable(placeholderDrawableId));
     }
 
     public void setImage(String url, Drawable placeholderDrawable) {
+        setImage(url, placeholderDrawable, -1, -1);
+    }
+
+    public void setImage(String url, Drawable placeholderDrawable, int desiredHeight, int desiredWidth) {
         final ShutterbugManager manager = ShutterbugManager.getSharedImageManager(getContext());
         manager.cancel(this);
         setImageDrawable(placeholderDrawable);
         if (url != null) {
-            manager.download(url, this);
+            manager.download(url, this, desiredHeight, desiredWidth);
         }
     }
 

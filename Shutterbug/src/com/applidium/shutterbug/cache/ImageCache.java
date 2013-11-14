@@ -9,11 +9,11 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 import com.applidium.shutterbug.cache.DiskLruCache.Editor;
 import com.applidium.shutterbug.cache.DiskLruCache.Snapshot;
+import com.applidium.shutterbug.utils.BitmapFactoryScale;
 import com.applidium.shutterbug.utils.DownloadRequest;
 
 public class ImageCache {
@@ -104,6 +104,15 @@ public class ImageCache {
         return null;
     }
 
+    public Snapshot queryDiskCache(String cacheKey) {
+        try {
+            return mDiskCache.get(cacheKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void storeToMemory(Bitmap bitmap, String cacheKey) {
         mMemoryCache.put(cacheKey, bitmap);
     }
@@ -134,12 +143,7 @@ public class ImageCache {
             try {
                 Snapshot snapshot = mDiskCache.get(mCacheKey);
                 if (snapshot != null) {
-                    try {
-                        return BitmapFactory.decodeStream(snapshot.getInputStream(0));
-                    } catch (OutOfMemoryError e) {
-                        e.printStackTrace();
-                        return null;
-                    }
+                    return BitmapFactoryScale.decodeSampledBitmapFromStream(snapshot.getInputStream(0), snapshot.getInputStream(0), mDownloadRequest);
                 } else {
                     return null;
                 }

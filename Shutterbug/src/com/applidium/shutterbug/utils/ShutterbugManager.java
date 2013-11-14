@@ -12,7 +12,6 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 import com.applidium.shutterbug.cache.DiskLruCache.Snapshot;
@@ -53,13 +52,17 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
     }
 
     public void download(String url, ShutterbugManagerListener listener) {
+        download(url, listener, -1, -1);
+    }
+
+    public void download(String url, ShutterbugManagerListener listener, int desiredHeight, int desiredWidth) {
         if (url == null || listener == null || mFailedUrls.contains(url)) {
             return;
         }
 
         mCacheListeners.add(listener);
         mCacheUrls.add(url);
-        ImageCache.getSharedImageCache(mContext).queryCache(getCacheKey(url), this, new DownloadRequest(url, listener));
+        ImageCache.getSharedImageCache(mContext).queryCache(getCacheKey(url), this, new DownloadRequest(url, listener, desiredHeight, desiredWidth));
     }
 
     public static String getCacheKey(String url) {
@@ -127,8 +130,7 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
     }
 
     @Override
-    public void onImageDownloadSuccess(final ShutterbugDownloader downloader, final InputStream inputStream,
-            final DownloadRequest downloadRequest) {
+    public void onImageDownloadSuccess(final ShutterbugDownloader downloader, final InputStream inputStream, final DownloadRequest downloadRequest) {
         new InputStreamHandlingTask(downloader, downloadRequest).execute(inputStream);
     }
 
@@ -165,11 +167,7 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
             Snapshot cachedSnapshot = sharedImageCache.storeToDisk(params[0], cacheKey);
             Bitmap bitmap = null;
             if (cachedSnapshot != null) {
-                try {
-                    bitmap = BitmapFactory.decodeStream(cachedSnapshot.getInputStream(0));
-                } catch (OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
+                bitmap = BitmapFactoryScale.decodeSampledBitmapFromStream(cachedSnapshot.getInputStream(0), cachedSnapshot.getInputStream(0), mDownloadRequest);
                 if (bitmap != null) {
                     sharedImageCache.storeToMemory(bitmap, cacheKey);
                 }
