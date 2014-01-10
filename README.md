@@ -17,6 +17,8 @@ First, ensure that the following permissions were added to your AndroidManifest.
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
+Then, you just have to add the jar or the library project to your project.
 
 ### Using convenience subclasses (FetchableImageView and FetchableOverlayItem)
 
