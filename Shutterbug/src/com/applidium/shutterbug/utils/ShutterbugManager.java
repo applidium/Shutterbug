@@ -19,6 +19,7 @@ import com.applidium.shutterbug.cache.ImageCache;
 import com.applidium.shutterbug.cache.ImageCache.ImageCacheListener;
 import com.applidium.shutterbug.downloader.ShutterbugDownloader;
 import com.applidium.shutterbug.downloader.ShutterbugDownloader.ShutterbugDownloaderListener;
+import com.applidium.shutterbug.utils.BitmapFactoryScale.InputStreamGenerator;
 
 public class ShutterbugManager implements ImageCacheListener, ShutterbugDownloaderListener {
     public interface ShutterbugManagerListener {
@@ -167,7 +168,12 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
             Snapshot cachedSnapshot = sharedImageCache.storeToDisk(params[0], cacheKey);
             Bitmap bitmap = null;
             if (cachedSnapshot != null) {
-                bitmap = BitmapFactoryScale.decodeSampledBitmapFromStream(cachedSnapshot.getInputStream(0), cachedSnapshot.getInputStream(0), mDownloadRequest);
+                bitmap = BitmapFactoryScale.decodeSampledBitmapFromStream(new InputStreamGenerator() {
+                    @Override
+                    public InputStream getStream() {
+                        return sharedImageCache.queryDiskCache(cacheKey).getInputStream(0);
+                    }
+                }, mDownloadRequest);
                 if (bitmap != null) {
                     sharedImageCache.storeToMemory(bitmap, cacheKey);
                 }

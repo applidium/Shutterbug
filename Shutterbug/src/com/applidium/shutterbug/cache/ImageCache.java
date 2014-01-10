@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import com.applidium.shutterbug.cache.DiskLruCache.Editor;
 import com.applidium.shutterbug.cache.DiskLruCache.Snapshot;
 import com.applidium.shutterbug.utils.BitmapFactoryScale;
+import com.applidium.shutterbug.utils.BitmapFactoryScale.InputStreamGenerator;
 import com.applidium.shutterbug.utils.DownloadRequest;
 
 public class ImageCache {
@@ -143,7 +144,18 @@ public class ImageCache {
             try {
                 Snapshot snapshot = mDiskCache.get(mCacheKey);
                 if (snapshot != null) {
-                    return BitmapFactoryScale.decodeSampledBitmapFromStream(snapshot.getInputStream(0), snapshot.getInputStream(0), mDownloadRequest);
+                    return BitmapFactoryScale.decodeSampledBitmapFromStream(new InputStreamGenerator() {
+
+                        @Override
+                        public InputStream getStream() {
+                            try {
+                                return mDiskCache.get(mCacheKey).getInputStream(0);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+                    }, mDownloadRequest);
                 } else {
                     return null;
                 }
