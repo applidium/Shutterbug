@@ -1,6 +1,6 @@
 # Shutterbug - Remote image loader with caching for Android
 
-`Shutterbug` is an Android library that lets you fetch remote images and cache them. It is particularly suited for displaying remote images in lists, grids, and maps as it includes convenience subclasses of `ImageView` (`FetchableImageView`) and `OverlayItem` (`FetchableOverlayItem`) that make implementation a one-liner.
+`Shutterbug` is an Android library that lets you fetch remote images and cache them. It is particularly suited for displaying remote images in lists or grids as it includes a convenience subclass of `ImageView` (`FetchableImageView`) that make implementation a one-liner.
 
 A dual memory and disk cache was implemented. It makes use of two backports of Android classes: [LruCache][] for the memory part and [DiskLruCache][] for the disk part. `LruCache` was introduced by API Level 12, but we provide it here as a standalone class so you can use the library under lower level APIs. Both `LruCache` and `DiskLruCache` are licensed under the Apache Software License, 2.0.
 
@@ -17,7 +17,7 @@ First, ensure that the following permissions were added to your AndroidManifest.
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    
+
 Then, you just have to add the jar or the library project to your project.
 
 ### Basic usage
@@ -26,13 +26,13 @@ You only need a context, an url and an `ImageView`:
 
 	ShutterbugManager.getSharedImageManager(context).download(url, imageView);
 
-### Using convenience subclasses (FetchableImageView and FetchableOverlayItem)
+### Using FetchableImageView
 
 1. Instantiate the subclass (either in your code or in an xml file, for example by replacing `ImageView` by `com.applidium.shutterbug.FetchableImageView`).
 2. Fetch the image (`setImage(String url)` or `setImage(String url, Drawable placeholderDrawable)` if you need to add a placeholder while waiting for the image to be fetched)
 3. That's it!
 
-We also provide you with a listener interface (`FetchableImageViewListener` and `FetchableOverlayItemListener`) which will help you refresh your UI if need.
+We also provide you with a listener interface (`FetchableImageViewListener`) which will help you refresh your UI if need.
 
 ### Using ShutterbugManager
 
