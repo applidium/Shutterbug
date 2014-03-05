@@ -95,6 +95,7 @@ public class ShutterbugActivity extends Activity {
                 try {
                     URL url = new URL("http://imgur.com/gallery/top/all.json");
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("User-Agent", "");
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     JSONObject result = new JSONObject(new java.util.Scanner(in).useDelimiter("\\A").next());
                     if (result.has("data")) {
