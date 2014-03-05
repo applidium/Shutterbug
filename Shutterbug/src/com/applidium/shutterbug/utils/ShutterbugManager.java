@@ -7,12 +7,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 
 import com.applidium.shutterbug.cache.DiskLruCache.Snapshot;
 import com.applidium.shutterbug.cache.ImageCache;
@@ -64,6 +69,16 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
         mCacheListeners.add(listener);
         mCacheUrls.add(url);
         ImageCache.getSharedImageCache(mContext).queryCache(getCacheKey(url), this, new DownloadRequest(url, listener, desiredHeight, desiredWidth));
+    }
+
+    public void download(String url, final ImageView imageView) {
+        download(url, imageView, -1, -1);
+    }
+
+    public void download(String url, final ImageView imageView, int desiredHeight, int desiredWidth) {
+        imageView.setImageDrawable(new ColorDrawable(mContext.getResources().getColor(R.color.transparent)));
+        cancel(imageView);
+        download(url, new ImageManagerListener(imageView), desiredHeight, desiredWidth);
     }
 
     public static String getCacheKey(String url) {
@@ -227,6 +242,40 @@ public class ShutterbugManager implements ImageCacheListener, ShutterbugDownload
                 mDownloadersMap.remove(downloader.getUrl());
             }
         }
+    }
 
+    public void cancel(ImageView imageView) {
+        Queue<ShutterbugManagerListener> queue = new LinkedList<ShutterbugManagerListener>();
+        for (ShutterbugManagerListener listener : mCacheListeners) {
+            if (listener instanceof ImageManagerListener && ((ImageManagerListener) listener).mImageView.equals(imageView)) {
+                queue.add(listener);
+            }
+        }
+        for (ShutterbugManagerListener listener : mDownloadImageListeners) {
+            if (listener instanceof ImageManagerListener && ((ImageManagerListener) listener).mImageView.equals(imageView)) {
+                queue.add(listener);
+            }
+        }
+        for (ShutterbugManagerListener listener : queue) {
+            cancel(listener);
+        }
+    }
+
+    private static class ImageManagerListener implements ShutterbugManagerListener {
+        private ImageView mImageView;
+
+        public ImageManagerListener(ImageView imageView) {
+            mImageView = imageView;
+        }
+
+        @Override
+        public void onImageSuccess(ShutterbugManager imageManager, Bitmap bitmap, String url) {
+            mImageView.setImageBitmap(bitmap);
+        }
+
+        @Override
+        public void onImageFailure(ShutterbugManager imageManager, String url) {
+
+        }
     }
 }

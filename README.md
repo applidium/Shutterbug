@@ -20,6 +20,12 @@ First, ensure that the following permissions were added to your AndroidManifest.
     
 Then, you just have to add the jar or the library project to your project.
 
+### Basic usage
+
+You only need a context, an url and an `ImageView`:
+
+	ShutterbugManager.getSharedImageManager(context).download(url, imageView);
+
 ### Using convenience subclasses (FetchableImageView and FetchableOverlayItem)
 
 1. Instantiate the subclass (either in your code or in an xml file, for example by replacing `ImageView` by `com.applidium.shutterbug.FetchableImageView`).
